@@ -1,0 +1,15 @@
+name: Improvement suggestion
+description: Suggest a lesson, usability, accessibility, or code improvement.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change and who it helps
+    validations:
+      required: true

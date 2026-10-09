@@ -1,0 +1,29 @@
+name: Bug report
+description: Report an ordinary bug or confusing lesson; never include confidential security findings.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: "Use private vulnerability reporting for security findings. Remove account details and private notes."
+  - type: input
+    id: location
+    attributes:
+      label: Page or file
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce locally
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Browser or local environment

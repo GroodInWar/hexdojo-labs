@@ -1,0 +1,67 @@
+name: hexdojo-network-0
+x-machine: &machine
+  build: .
+  image: hexdojo-network-0:workshop
+  environment:
+    CLIENT_LAN: ${CLIENT_LAN:-10.10.0.0/24}
+    SERVER_LAN: ${SERVER_LAN:-10.20.0.0/24}
+    CLIENT_IP: ${CLIENT_IP:-10.10.0.10}
+    SERVER_IP: ${SERVER_IP:-10.20.0.10}
+    CLIENT_GATEWAY: ${CLIENT_GATEWAY:-10.10.0.1}
+    SERVER_GATEWAY: ${SERVER_GATEWAY:-10.20.0.1}
+  read_only: true
+  cap_drop: [ALL]
+  cap_add: [NET_ADMIN, NET_RAW]
+  security_opt: [no-new-privileges:true]
+  pids_limit: 64
+  mem_limit: 256m
+  cpus: 0.5
+  tmpfs:
+    - /tmp:size=32m,noexec,nosuid,nodev
+    - /run:size=8m,noexec,nosuid,nodev
+    - /work:size=64m,noexec,nosuid,nodev
+  sysctls:
+    net.ipv4.conf.all.rp_filter: "0"
+    net.ipv4.conf.default.rp_filter: "0"
+    net.ipv6.conf.all.disable_ipv6: "1"
+    net.ipv6.conf.default.disable_ipv6: "1"
+services:
+  client:
+    <<: *machine
+    command: [client]
+    networks:
+      client-lan:
+        ipv4_address: ${CLIENT_IP:-10.10.0.10}
+  router:
+    <<: *machine
+    command: [router]
+    sysctls:
+      net.ipv4.ip_forward: "1"
+      net.ipv4.conf.all.rp_filter: "0"
+      net.ipv4.conf.default.rp_filter: "0"
+      net.ipv6.conf.all.disable_ipv6: "1"
+      net.ipv6.conf.default.disable_ipv6: "1"
+    networks:
+      client-lan:
+        ipv4_address: ${CLIENT_GATEWAY:-10.10.0.1}
+      server-lan:
+        ipv4_address: ${SERVER_GATEWAY:-10.20.0.1}
+  server:
+    <<: *machine
+    command: [server]
+    networks:
+      server-lan:
+        ipv4_address: ${SERVER_IP:-10.20.0.10}
+networks:
+  client-lan:
+    internal: true
+    ipam:
+      config:
+        - subnet: ${CLIENT_LAN:-10.10.0.0/24}
+          gateway: ${CLIENT_BRIDGE:-10.10.0.254}
+  server-lan:
+    internal: true
+    ipam:
+      config:
+        - subnet: ${SERVER_LAN:-10.20.0.0/24}
+          gateway: ${SERVER_BRIDGE:-10.20.0.254}

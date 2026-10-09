@@ -1,0 +1,8 @@
+{
+  "name": "hexdojo-labs",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "test": "python3 tools/check-labs.py"
+  }
+}
